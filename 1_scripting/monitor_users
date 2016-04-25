@@ -1,0 +1,28 @@
+#!/usr/bin/perl 
+use warnings;
+use strict;
+use Getopt::Std;
+use vars qw($opt_w $opt_c $opt_u);
+
+getopts('w:c:u:');
+my $WARN=$opt_w||5;
+my $CRIT=$opt_c||10;
+#my $USER;
+my $nusers;
+my @WHO=`who -ud 2>/dev/null`;
+if (defined $opt_u){
+	my $USER=$opt_u;
+	$nusers=grep(/^$USER\b/,@WHO);
+}
+chomp $nusers;
+if($nusers>=$CRIT){
+	print "CRITICAL - there are $nusers users\n";
+	exit 2;
+}elsif($nusers>=$WARN){
+	print "WARNING - there are $nusers users\n";
+	exit 1;
+}else{
+	print "OK - there are $nusers users\n";
+	exit 0;
+}   
+print "UNKNOWN" and exit 3;
